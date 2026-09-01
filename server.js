@@ -23,10 +23,11 @@ app.post("/generate", async (req, res) => {
     console.log("Generating image...");
 
     const imageBlob = await hf.textToImage({
-      model: "black-forest-labs/FLUX.1-schnell",
-      inputs: prompt.trim()
-    });
-
+  model: "black-forest-labs/FLUX.1-schnell",
+  provider: "fal-ai",
+  inputs: prompt.trim()
+});
+    
     const buffer = Buffer.from(await imageBlob.arrayBuffer());
     const base64 = buffer.toString("base64");
 
