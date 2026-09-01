@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Image Generator</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #09001f, #16003b, #001d3d);
+      color: white;
+      display: flex;
+      justify-content: center;
+      padding: 25px 15px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 25px 0 10px;
+      font-size: 32px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #bdb8d8;
+      margin-bottom: 25px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 130px;
+      resize: vertical;
+      border: none;
+      outline: none;
+      border-radius: 14px;
+      padding: 15px;
+      font-size: 16px;
+      background: #100b25;
+      color: white;
+    }
+
+    textarea::placeholder {
+      color: #8f89a8;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 15px;
+      border: none;
+      border-radius: 14px;
+      font-size: 17px;
+      font-weight: bold;
+      color: white;
+      background: linear-gradient(90deg, #7c3aed, #2563eb);
+      cursor: pointer;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    #status {
+      text-align: center;
+      margin-top: 18px;
+      color: #c4b5fd;
+    }
+
+    #result {
+      margin-top: 20px;
+      display: none;
+    }
+
+    #result img {
+      width: 100%;
+      border-radius: 16px;
+      display: block;
+    }
+
+    #download {
+      display: block;
+      text-align: center;
+      margin-top: 12px;
+      padding: 13px;
+      background: #16a34a;
+      color: white;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>✨ AI Image Generator</h1>
+
+    <p class="subtitle">
+      Turn your imagination into an image
+    </p>
+
+    <div class="card">
+
+      <textarea
+        id="prompt"
+        placeholder="Example: A futuristic city at night, neon lights, cinematic, ultra realistic..."
+      ></textarea>
+
+      <button onclick="generateImage()">
+        🎨 Generate Image
+      </button>
+
+      <div id="status"></div>
+
+      <div id="result">
+        <img id="image" src="" alt="Generated AI Image">
+
+        <a id="download" href="" download="ai-image.png">
+          ⬇️ Download Image
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+
+<script>
+
+async function generateImage() {
+
+  const prompt = document.getElementById("prompt").value.trim();
+  const status = document.getElementById("status");
+  const result = document.getElementById("result");
+  const image = document.getElementById("image");
+  const download = document.getElementById("download");
+
+  if (!prompt) {
+    status.textContent = "⚠️ Please enter a prompt.";
+    return;
+  }
+
+  status.textContent = "⏳ Generating your image...";
+  result.style.display = "none";
+
+  try {
+
+    const response = await fetch("/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ prompt })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Something went wrong");
+    }
+
+    image.src = data.image;
+    download.href = data.image;
+
+    result.style.display = "block";
+    status.textContent = "✅ Image generated!";
+
+  } catch (error) {
+
+    status.textContent = "❌ " + error.message;
+
+  }
+}
+
+</script>
+
+</body>
+</html>
+
