@@ -5,7 +5,7 @@ const { InferenceClient } = require("@huggingface/inference");
 dotenv.config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 const hf = new InferenceClient(process.env.HF_TOKEN);
 
@@ -35,15 +35,16 @@ app.post("/generate", async (req, res) => {
     });
 
   } catch (error) {
-  console.error("FULL HUGGING FACE ERROR:", error);
+    console.error("FULL HUGGING FACE ERROR:", error);
 
-  res.status(500).json({
-    error: error.message || "Image generation failed.",
-    details: error.response?.data || error.cause?.message || null
-  });
-}
+    res.status(500).json({
+      error: error.message || "Image generation failed.",
+      details: error.response?.data || error.cause?.message || null
+    });
+  }
+});
 
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`AI Image Generator running at http://0.0.0.0:${PORT}`);
+  console.log(`AI Image Generator running at port ${PORT}`);
 });
 
