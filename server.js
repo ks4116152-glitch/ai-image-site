@@ -35,13 +35,13 @@ app.post("/generate", async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
+  console.error("FULL HUGGING FACE ERROR:", error);
 
-    res.status(500).json({
-      error: error.message || "Image generation failed."
-    });
-  }
-});
+  res.status(500).json({
+    error: error.message || "Image generation failed.",
+    details: error.response?.data || error.cause?.message || null
+  });
+}
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`AI Image Generator running at http://0.0.0.0:${PORT}`);
